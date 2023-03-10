@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Button } from '@mui/material'
 
-const ActionButton = ({ text, action }) => {
+const ActionButton = ({ text, action, isActive }) => {
   return (
     <Button
-      variant="outlined"
+      variant={isActive ? "contained": "outlined"}
       onClick={action}
     >
       {text}

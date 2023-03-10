@@ -2,10 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import CssBaseline from '@mui/material/CssBaseline';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { Provider } from 'react-redux'
+import { Provider as ReduxProvider } from 'react-redux'
 import { persistStore } from 'redux-persist';
-import configureStore from './configureStore'
 import { PersistGate } from 'redux-persist/integration/react';
+import configureStore from './configureStore'
 import { theme } from "./theme/index";
 import App from "./components/App";
 import meta from '../package.json';
@@ -23,7 +23,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <ReduxProvider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={theme}>
@@ -32,6 +32,6 @@ root.render(
           </ThemeProvider>
         </StyledEngineProvider>
       </PersistGate>
-    </Provider>
+    </ReduxProvider>
   </React.StrictMode>
 );

@@ -1,18 +1,24 @@
 import React from 'react'
-import * as R from 'ramda'
+import * as R from 'ramda';
+import { useDispatch, useSelector } from 'react-redux'
+import { selectMap } from '../../selectors/pixelArtGenerator';
+import { setPeint } from '../../ducks/pixelArtGenerator';
 
-const Painting = ({ tab, action, mouseState }) => {
+const Painting = ({ mouseState }) => {
+  const dispatch = useDispatch();
+  const map = useSelector(selectMap)
+  
   return (
     <table>
       <tbody>
-        {tab.map((row, i) => (
+        {map.map((row, i) => (
           <tr key={`row-${i}`}>
             {row.map((cell, j) => (
               <td 
                 key={`cell-${i}-${j}`} 
-                style={{ height: "1em", width: "1em", border: "1px solid #ddd", backgroundColor: tab[i][j] }}
-                onMouseDown={() => action(i, j)}
-                onMouseOver={(() => mouseState ? action(i, j) : null)}
+                style={{ height: "1em", width: "1em", border: "1px solid #ddd", backgroundColor: map[i][j] }}
+                onClick={() => dispatch(setPeint(i, j))}
+                // onMouseOver={(() => mouseState ? dispatch(setPeint(i, j)) : null)}
               >
               </td>
             ))}

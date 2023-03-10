@@ -7,6 +7,10 @@ import ColorPicker from './ColorPicker';
 import Painting from './Painting';
 import { styled } from "@mui/material/styles"
 
+import { useDispatch, useSelector } from 'react-redux'
+import { updateMap, setEraseColor } from '../../ducks/pixelArtGenerator'
+import { selectEraseColor } from '../../selectors/pixelArtGenerator'
+
 const Wrapper = styled(Box)(() => ({
   width: "80vmin",
   padding: "40px 20px",
@@ -24,22 +28,11 @@ const OptionsWrapper = styled(Box)(() => ({
   marginBottom: "16px"
 }))
 
-const setPaint = (setAction, tab, color, setTab) => {
-  console.log(color)
-  setAction(() => (x, y) => {
-    console.log("On va colorier la case " + x + " " + y + " en " + color), color
-    const newCellColor = [...tab]
-    newCellColor[x][y] = color
-    setTab(newCellColor)
-  })
-}
-
 const PixelArtGenerator = () => {
+  const dispatch = useDispatch();
   const [width, setWidth] = React.useState(1)
   const [height, setHeight] = React.useState(1)
-  const [color, setColor] = React.useState('#ffffff')
-  const [tab, setTab] = React.useState([])
-  const [action, setAction] = React.useState(() => () => null)
+  const eraseColor = useSelector(selectEraseColor)
   const [isMouseDown, setIsMouseDown] = React.useState(false)
 
   const handleMouseUp = () => {
@@ -49,6 +42,8 @@ const PixelArtGenerator = () => {
   const handleMouseDown = () => {
     setIsMouseDown(true)
   }
+
+  const isEraseActive = !R.isNil(eraseColor)
 
   return (<>
     <Wrapper
@@ -72,43 +67,29 @@ const PixelArtGenerator = () => {
           text="Create Grid"
           action={() => {
             const newGrid = R.times(() => R.times(() => '#ffffff', width), height)
-            console.log(newGrid)
-            setTab(newGrid)
+            dispatch(updateMap(newGrid))
           }}
         />
         <ActionButton 
           text="Clear Grid"
-          action={() => setTab([])}
+          action={() => dispatch(updateMap([]))}
         />
-        <ColorPicker 
-          color={color}
-          setColor={setColor}
+        <ColorPicker />
+        <ActionButton 
+          text="Paint"
+          isActive={!isEraseActive}
+          action={() => isEraseActive ? dispatch(setEraseColor()) : undefined}
         />
         <ActionButton 
           text="Erase"
-          action={() => setPaint(setAction, tab, "#ffffff", setTab)}
-        />
-        <ActionButton 
-          text="Paint"
-          action={() => setPaint(setAction, tab, color, setTab)}
+          isActive={isEraseActive}
+          action={() => !isEraseActive ? dispatch(setEraseColor()) : undefined}
         />
       </OptionsWrapper>
       <Painting 
-        tab={tab}
-        action={action}
+        // action={action}
         mouseState={isMouseDown}
       />
-      <Button
-        variant="outlined"
-        onClick={() => {
-          console.log("Width : " + width)
-          console.log("Height : " + height)
-          console.log("Color : " + color)
-          // console.log("Tab : " + tab)
-        }}
-      >
-        States Test
-      </Button>
     </Wrapper>
   </>)
 }
